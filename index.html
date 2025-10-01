@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigator Training AI - Web Call Console</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #2563EB;
+            --primary-text: #1F2937;
+            --secondary-text: #6B7280;
+            --success: #10B981;
+            --danger: #EF4444;
+            --border-light: #E5E7EB;
+            --console-bg: #1F2937;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f7f9;
+            color: var(--primary-text);
+            padding-top: 80px;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-light);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 70px;
+            box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        header .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary-text);
+        }
+
+        header .logo-text span {
+            color: var(--primary-blue);
+            font-weight: 900;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--secondary-text);
+            font-weight: 600;
+            font-size: 15px;
+            transition: color 0.3s;
+            padding: 5px 0;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: var(--primary-blue);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .auth-buttons a {
+            padding: 8px 20px;
+            border: 1px solid var(--primary-blue);
+            border-radius: 6px;
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .auth-buttons a:hover {
+            background: var(--primary-blue);
+            color: #fff;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .section-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-light);
+            transition: all 0.3s;
+        }
+
+        .section-card:hover {
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.08);
+            border-color: var(--primary-blue);
+        }
+
+        .section-card h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-text);
+            margin-bottom: 8px;
+        }
+
+        .section-card p {
+            color: var(--secondary-text);
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 14px 24px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: #fff;
+            flex: 1;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #1D4ED8;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+            flex: 1;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #DC2626;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status-box {
+            background: #F9FAFB;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 14px;
+            color: var(--secondary-text);
+        }
+
+        .status-box.active {
+            background: #D1FAE5;
+            border-color: var(--success);
+            color: #065F46;
+        }
+
+        /* Transcript Console */
+        .transcript-console {
+            background: var(--console-bg);
+            border: 1px solid #374151;
+            border-radius: 8px;
+            padding: 20px;
+            height: 400px;
+            overflow-y: auto;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #E5E7EB;
+        }
+
+        .transcript-console::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .transcript-console::-webkit-scrollbar-thumb {
+            background: #4B5563;
+            border-radius: 3px;
+        }
+
+        .transcript-line {
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .transcript-timestamp {
+            color: #9CA3AF;
+            font-size: 11px;
+            margin-right: 8px;
+        }
+
+        .transcript-role {
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        .transcript-role.agent {
+            color: #60A5FA;
+        }
+
+        .transcript-role.user {
+            color: #34D399;
+        }
+
+        .transcript-role.system {
+            color: #FBBF24;
+        }
+
+        .transcript-text {
+            color: #E5E7EB;
+        }
+
+        .typewriter {
+            display: inline;
+            border-right: 2px solid #10B981;
+            animation: blink 0.7s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                border-color: transparent;
+            }
+        }
+
+        /* System Console */
+        .console {
+            font-family: 'Roboto Mono', monospace;
+            background: var(--console-bg);
+            color: #E5E7EB;
+            border: 1px solid #374151;
+            padding: 20px;
+            height: 400px;
+            overflow-y: auto;
+            font-size: 13px;
+            border-radius: 8px;
+            line-height: 1.6;
+        }
+
+        .console::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .console::-webkit-scrollbar-thumb {
+            background: #4B5563;
+            border-radius: 3px;
+        }
+
+        .console-line {
+            margin-bottom: 4px;
+        }
+
+        .console-line.success {
+            color: #4ADF86;
+        }
+
+        .console-line.error {
+            color: var(--danger);
+        }
+
+        .console-line.warning {
+            color: #FBBF24;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Feedback Section */
+        .feedback-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary-text);
+            margin-bottom: 8px;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+            padding: 12px;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .btn-submit {
+            background: var(--success);
+            color: white;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-submit:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .btn-reset {
+            background: #6B7280;
+            color: white;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-reset:hover {
+            background: #4B5563;
+        }
+
+        .feedback-status {
+            grid-column: 1 / -1;
+            padding: 14px 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .feedback-status.success {
+            background: #D1FAE5;
+            color: #065F46;
+            border: 1px solid var(--success);
+            display: block;
+        }
+
+        .feedback-status.error {
+            background: #FEE2E2;
+            color: #991B1B;
+            border: 1px solid var(--danger);
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 70px;
+            }
+            header {
+                height: auto;
+                padding: 10px 15px;
+            }
+            nav {
+                display: none;
+            }
+            .content-grid {
+                padding: 0 15px;
+            }
+            .feedback-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-text">Navigator<span>Pro</span></div>
+        <nav>
+            <a href="#" class="active">Training</a>
+            <a href="#">Analytics</a>
+            <a href="#">Settings</a>
+        </nav>
+        <div class="auth-buttons">
+            <a href="#">Admin</a>
+        </div>
+    </header>
+
+    <div class="content-grid">
+        <!-- Call Controls -->
+        <div class="section-card">
+            <h2>Web Call Controls</h2>
+            <p>Start and manage training voice calls</p>
+            <div class="controls">
+                <button id="startBtn" class="btn-primary" disabled>
+                    Start Call
+                </button>
+                <button id="endBtn" class="btn-danger" disabled>
+                    End Call
+                </button>
+            </div>
+            <div id="callStatus" class="status-box">
+                Initializing system...
+            </div>
+        </div>
+
+        <!-- SDK Status -->
+        <div class="section-card">
+            <h2>System Status</h2>
+            <p>Voice engine and connection status</p>
+            <div id="sdkStatus" class="status-box">
+                Loading voice engine...
+            </div>
+        </div>
+
+        <!-- Live Transcript -->
+        <div class="section-card full-width">
+            <h2>Live Transcript</h2>
+            <p>Real-time conversation transcript</p>
+            <div id="transcript" class="transcript-console">
+                <div class="transcript-line">
+                    <span class="transcript-timestamp">[--:--:--]</span>
+                    <span class="transcript-role system">SYSTEM:</span>
+                    <span class="transcript-text">Waiting for call to start...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Console -->
+        <div class="section-card full-width">
+            <h2>System Console</h2>
+            <p>Technical logs and system events</p>
+            <div id="systemLog" class="console"></div>
+        </div>
+
+        <!-- Training Feedback -->
+        <div class="section-card full-width">
+            <h2>Training Feedback & Evaluation</h2>
+            <p>Submit your evaluation to improve AI agent performance</p>
+
+            <form id="feedbackForm" class="feedback-form">
+                <div class="form-group">
+                    <label for="chatFeedback">Call Performance *</label>
+                    <textarea id="chatFeedback" name="chat" placeholder="Evaluate conversation quality, naturalness, and effectiveness..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="webFeedback">Web Interface</label>
+                    <textarea id="webFeedback" name="web" placeholder="Optional: Comments on interface and user experience..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="smsFeedback">Overall Notes</label>
+                    <textarea id="smsFeedback" name="sms" placeholder="Optional: General observations and suggestions..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-reset" onclick="resetFeedback()">Reset</button>
+                    <button type="submit" class="btn-submit">Submit Feedback</button>
+                </div>
+
+                <div id="feedbackStatus" class="feedback-status"></div>
+            </form>
+        </div>
+    </div>
+
+    <script src="./retell-sdk-bundle.js"></script>
+
+    <script>
+        const API_URL = window.location.origin;
+
+        let retellClient = null;
+        let callActive = false;
+        let transcriptBuffer = new Map();
+
+        const startBtn = document.getElementById('startBtn');
+        const endBtn = document.getElementById('endBtn');
+        const callStatus = document.getElementById('callStatus');
+        const sdkStatus = document.getElementById('sdkStatus');
+        const transcript = document.getElementById('transcript');
+        const systemLog = document.getElementById('systemLog');
+
+        // System Log
+        function log(message, type = 'normal') {
+            const timestamp = new Date().toLocaleTimeString('it-IT');
+            const line = document.createElement('div');
+            line.className = `console-line ${type}`;
+            line.textContent = `[${timestamp}] ${message}`;
+            systemLog.appendChild(line);
+            systemLog.scrollTop = systemLog.scrollHeight;
+        }
+
+        // Transcript with typewriter effect
+        function addTranscript(role, text, useTypewriter = false) {
+            const timestamp = new Date().toLocaleTimeString('it-IT');
+            const line = document.createElement('div');
+            line.className = 'transcript-line';
+
+            const textId = `text-${Date.now()}`;
+            line.innerHTML = `
+                <span class="transcript-timestamp">[${timestamp}]</span>
+                <span class="transcript-role ${role.toLowerCase()}">${role.toUpperCase()}:</span>
+                <span class="transcript-text" id="${textId}"></span>
+            `;
+
+            transcript.appendChild(line);
+            const textSpan = document.getElementById(textId);
+
+            if (useTypewriter && text.length > 30) {
+                let i = 0;
+                textSpan.classList.add('typewriter');
+
+                const interval = setInterval(() => {
+                    if (i < text.length) {
+                        textSpan.textContent += text.charAt(i);
+                        i++;
+                    } else {
+                        textSpan.classList.remove('typewriter');
+                        clearInterval(interval);
+                    }
+                }, 20);
+            } else {
+                textSpan.textContent = text;
+            }
+
+            transcript.scrollTop = transcript.scrollHeight;
+        }
+
+        // SDK Initialization
+        window.addEventListener('load', () => {
+            log('System initializing...', 'normal');
+
+            const RetellWebClient = window.RetellSDK?.RetellWebClient || window.RetellWebClient;
+
+            if (RetellWebClient) {
+                window.RetellWebClient = RetellWebClient;
+                sdkStatus.className = 'status-box active';
+                sdkStatus.textContent = 'Voice engine ready';
+                callStatus.textContent = 'Ready to start call';
+                startBtn.disabled = false;
+                log('Voice engine loaded successfully', 'success');
+                log('Agent: Silvia Rossi initialized', 'success');
+            } else {
+                sdkStatus.textContent = 'SDK load error';
+                callStatus.textContent = 'System error';
+                log('Critical error: SDK failed to load', 'error');
+            }
+        });
+
+        // Start Call
+        startBtn.onclick = async () => {
+            try {
+                log('Initiating call...', 'warning');
+                callStatus.textContent = 'Connecting...';
+                startBtn.disabled = true;
+
+                const response = await fetch(`${API_URL}/create-call`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (!response.ok) throw new Error(`Server error: ${response.status}`);
+
+                const data = await response.json();
+                log(`Call created: ${data.call_id}`, 'success');
+
+                if (!data.access_token) throw new Error('No access token');
+
+                callStatus.textContent = 'Establishing connection...';
+                retellClient = new RetellWebClient();
+
+                retellClient.on('call_started', () => {
+                    callActive = true;
+                    callStatus.className = 'status-box active';
+                    callStatus.textContent = 'Call active - Agent: Silvia Rossi';
+                    endBtn.disabled = false;
+                    log('Call started successfully', 'success');
+                    addTranscript('SYSTEM', 'Call session started');
+                });
+
+                retellClient.on('call_ended', () => {
+                    callActive = false;
+                    callStatus.className = 'status-box';
+                    callStatus.textContent = 'Call ended';
+                    startBtn.disabled = false;
+                    endBtn.disabled = true;
+                    log('Call terminated', 'normal');
+                    addTranscript('SYSTEM', 'Call session ended');
+                });
+
+                retellClient.on('error', (error) => {
+                    callStatus.className = 'status-box';
+                    callStatus.textContent = `Error: ${error.message}`;
+                    startBtn.disabled = false;
+                    endBtn.disabled = true;
+                    log(`Error: ${error.message}`, 'error');
+                });
+
+                retellClient.on('agent_start_talking', () => {
+                    if (callActive) {
+                        log('Agent speaking', 'normal');
+                    }
+                });
+
+                retellClient.on('agent_stop_talking', () => {
+                    if (callActive) {
+                        log('Agent stopped', 'normal');
+                    }
+                });
+
+                retellClient.on('update', (update) => {
+                    if (update.transcript) {
+                        const lines = update.transcript.split('\n').filter(l => l.trim());
+
+                        lines.forEach(line => {
+                            const hash = line.trim();
+                            if (!transcriptBuffer.has(hash)) {
+                                transcriptBuffer.set(hash, true);
+
+                                if (line.includes('Agent:')) {
+                                    const text = line.replace('Agent:', '').trim();
+                                    if (text) addTranscript('AGENT', text, true);
+                                } else if (line.includes('User:')) {
+                                    const text = line.replace('User:', '').trim();
+                                    if (text) addTranscript('USER', text, false);
+                                }
+                            }
+                        });
+                    }
+                });
+
+                await retellClient.startCall({
+                    accessToken: data.access_token,
+                    sampleRate: 24000
+                });
+
+                log('Call initialization complete', 'success');
+
+            } catch (error) {
+                callStatus.textContent = `Error: ${error.message}`;
+                startBtn.disabled = false;
+                log(`Error: ${error.message}`, 'error');
+            }
+        };
+
+        // End Call
+        endBtn.onclick = async () => {
+            if (retellClient) {
+                callStatus.textContent = 'Ending call...';
+                log('Terminating call...', 'warning');
+                await retellClient.stopCall();
+            }
+        };
+
+        // Feedback Form
+        document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const chat = document.getElementById('chatFeedback').value.trim();
+            const web = document.getElementById('webFeedback').value.trim();
+            const sms = document.getElementById('smsFeedback').value.trim();
+
+            if (!chat) {
+                showFeedbackStatus('Call performance feedback is required', 'error');
+                return;
+            }
+
+            log('Submitting training feedback...', 'warning');
+
+            try {
+                const response = await fetch(`${API_URL}/save-feedback`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ chat, web, sms })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showFeedbackStatus(`Feedback saved successfully! ID: ${result.id}`, 'success');
+                    log(`Feedback saved to database. ID: ${result.id}`, 'success');
+                    setTimeout(() => resetFeedback(), 3000);
+                } else {
+                    showFeedbackStatus('Error: ' + result.error, 'error');
+                    log('Feedback save failed: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showFeedbackStatus('Network error: ' + error.message, 'error');
+                log('Feedback error: ' + error.message, 'error');
+            }
+        });
+
+        function showFeedbackStatus(message, type) {
+            const statusEl = document.getElementById('feedbackStatus');
+            statusEl.textContent = message;
+            statusEl.className = 'feedback-status ' + type;
+
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusEl.className = 'feedback-status';
+                }, 8000);
+            }
+        }
+
+        function resetFeedback() {
+            document.getElementById('feedbackForm').reset();
+            document.getElementById('feedbackStatus').className = 'feedback-status';
+        }
+    </script>
+</body>
+</html>

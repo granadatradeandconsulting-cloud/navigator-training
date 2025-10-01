@@ -1,0 +1,23 @@
+{
+  "name": "navigator-training-ai",
+  "version": "1.0.0",
+  "description": "Navigator Training AI - Web Call Agent Training Console",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "build": "node build-sdk.js",
+    "postinstall": "npm run build"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "node-fetch": "^3.3.2",
+    "retell-client-js-sdk": "^2.0.7"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.10"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
